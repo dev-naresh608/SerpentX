@@ -1,0 +1,268 @@
+:root {
+  --bg-primary-color: #0c0c0c;
+  /* --bg-food-color: #f00303; */
+  --bg-food-color: #ffc400;
+
+  /* --bg-big-food-color: #ffc400; */
+  --bg-big-food-color: #f00303;
+  --bg-snake-color: #ffffff;
+
+  --bg-snake-head-color: #ffffff;
+  --bg-snake-tail-color: #848484;
+  --bg-happy-snake-color: #f3f2ef;
+  --bg-happy-snake-colorV2:rgb(255, 0, 0);
+
+  --text-primary-color: #f0f0f0;
+
+  /* Spacing  */
+  --space-xs: 4px;
+  --space-md: 8px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-2xl: 40px;
+  --space-3xl: 48px;
+
+  /* padding variables  */
+  /* Spacing  */
+  --padding-xs: 4px;
+  --padding-md: 8px;
+  --padding-lg: 16px;
+  --padding-xl: 24px;
+  --padding-xxl: 32px;
+  --padding-2xl: 40px;
+  --padding-3xl: 48px;
+
+  /* Border Color  */
+  --border-primary-color: #333333;
+
+  /* Border Radius  */
+  --br-xs: 4px;
+  --br-md: 8px;
+  --br-lg: 12px;
+  --br-xl: 16px;
+  --br-xxl: 20px;
+  --br-2xl: 24px;
+}
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+  color: #303030;
+}
+
+main,
+section {
+  height: 100%;
+  width: 100%;
+}
+section {
+  background-color: var(--bg-primary-color);
+  color: var(--text-primary-color);
+  border: 2px solid var(--border-primary-color);
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-md);
+}
+section .info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+.info h2 {
+  border: 1px solid var(--border-primary-color);
+  border-radius: var(--br-lg);
+  padding: var(--padding-md);
+}
+.board {
+  border: 1px solid var(--border-primary-color);
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(20px, 1fr));
+  font-size: 30px;
+  text-wrap: nowrap;
+}
+
+
+.block {
+  /* border: 1px solid var(--border-primary-color); */
+  /* border-radius: var(--br-xs); */
+  font-size: 20px;
+}
+.food {
+  background-color: var(--bg-food-color);
+  clip-path: circle(30% at 50% 50%);
+}
+.big-food {
+  background-color: var(--bg-big-food-color);
+  clip-path: circle(40% at 50% 50%);
+  animation: popUp 1s infinite linear;
+  transform: scale(1);
+}
+.snake {
+  background-color: var(--bg-snake-color);
+  /* border-radius: var(--br-xs); */
+}
+.happy-snake {
+  background-color: var(--bg-happy-snake-color);
+  transform: scale(1);
+  opacity: 1;
+  animation: happySnake 3s linear infinite;
+  animation-play-state: running;
+}
+/* ! Snake Head  */
+.up-head,
+.down-head,
+.left-head,
+.right-head {
+  background-color: var(--bg-snake-head-color);
+  position: relative;
+  border-radius: 0px var(--br-xl) var(--br-xl) 0;
+}
+
+.right-head {
+  /* transform: rotate(0deg); */
+  border-radius: 0px var(--br-xl) var(--br-xl) 0;
+}
+.left-head {
+  /* transform: rotate(180deg); */
+  border-radius: var(--br-xl) 0 0 var(--br-xl);
+}
+.up-head {
+  /* transform: rotate(270deg); */
+  border-radius: var(--br-xl) var(--br-xl) 0 0;
+}
+.down-head {
+  /* transform: rotate(90deg); */
+  border-radius: 0px 0px var(--br-xl) var(--br-xl);
+}
+
+.up-head::after,
+.down-head::after,
+.left-head::after,
+.right-head::after {
+  content: "";
+  position: absolute;
+  background-color: rgb(0, 0, 0);
+  height: 20%;
+  width: 20%;
+  border-radius: 50%;
+}
+.up-head::before,
+.down-head::before,
+.left-head::before,
+.right-head::before {
+  content: "";
+  position: absolute;
+  background-color: rgb(0, 0, 0);
+  height: 20%;
+  width: 20%;
+  border-radius: 50%;
+}
+.up-head::after {
+  /* top */
+  left: 20%;
+  top: 20%;
+}
+
+.down-head::after {
+  /* bottom */
+  left: 20%;
+  top: 60%;
+}
+
+.left-head::after {
+  /* left */
+  left: 20%;
+  top: 20%;
+}
+
+.right-head::after {
+  /* right  */
+  left: 60%;
+  top: 20%;
+}
+.right-head::before {
+  /* right */
+  left: 60%;
+  bottom: 20%;
+}
+.left-head::before {
+  /* left */
+  left: 20%;
+  bottom: 15%;
+}
+.down-head::before {
+  /*  bottom */
+  left: 60%;
+  top: 60%;
+}
+.up-head::before {
+  /* top */
+  left: 60%;
+  top: 20%;
+}
+ /* ! Snake Tail  */
+ .tail{
+  background-color: var(--bg-snake-tail-color);
+  position: relative;
+ }
+
+ .modal{
+  color: #ffffff;
+  height: 100vh;
+  width: 100vw;
+  background-color: #4b4b4b68;
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+ }
+
+@keyframes popUp {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes happySnake {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.25);
+      background-color: var(--bg-happy-snake-colorV2);
+
+  }
+}
