@@ -1,8 +1,45 @@
 addEventListener("DOMContentLoaded", () => {
   const highScore = getHighScore();
   document.getElementById("highScore").innerText = highScore;
+
   function getHighScore() {
     return JSON.parse(localStorage.getItem("highScore")) || 0;
+  }
+
+  // ! todo Game Sounds:
+
+  const sounds = {
+    toggle: new Audio("./sounds/start-pause.wav"),
+    move: new Audio("./sounds/move.wav"),
+    eat: new Audio("./sounds/eat-small-food.wav"),
+    bigEat: new Audio("./sounds/winning-an-extra-bonus.wav"),
+    gameOver: new Audio("./sounds/game-over.wav"),
+  };
+
+  const volumes = {
+    toggle: 0.3,
+    move: 0.15,
+    eat: 0.35,
+    bigEat: 0.45,
+    gameOver: 0.5,
+  };
+
+  Object.entries(sounds).forEach(([name, audio]) => {
+    audio.preload = "auto";
+    audio.volume = volumes[name];
+  });
+
+  function playSound(name) {
+    const audio = sounds[name];
+    if (!audio) return;
+
+    // Restart short effects if triggered again.
+    audio.pause();
+    audio.currentTime = 0;
+
+    audio.play().catch((error) => {
+      console.warn(`Could not play ${name} sound:`, error);
+    });
   }
 
   const modal = document.querySelector(".modal");
@@ -41,6 +78,7 @@ addEventListener("DOMContentLoaded", () => {
     if (e.code === "Space") {
       modal.style.display = "none";
       isGameRunning = isGameRunning ? false : true;
+      playSound("toggle");
       if (isGameRunning) {
         console.log("Game Started");
         timeInterVal = setInterval(gamePlayTime, 1000);
@@ -51,8 +89,9 @@ addEventListener("DOMContentLoaded", () => {
       } else {
         modal.style.display = "flex";
         console.log("Game Stoped");
+
         clearInterval(intervalId);
-        clearTimeout(timeInterVal);
+        clearInterval(timeInterVal);
       }
     }
   });
@@ -81,15 +120,39 @@ addEventListener("DOMContentLoaded", () => {
 
   // todo change direction of snake as per hit keys.
   dir = addEventListener("keydown", (e) => {
-    if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
-      direction = "down";
-    } else if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
-      direction = "up";
-    } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-      direction = "left";
-    } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-      direction = "right";
-    }
+    // if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
+    //   direction = "down";
+    // } else if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
+    //   direction = "up";
+    // } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+    //   direction = "left";
+    // } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+    //   direction = "right";
+    // }
+
+    addEventListener("keydown", (e) => {
+      const directions = {
+        ArrowDown: "down",
+        s: "down",
+        S: "down",
+        ArrowUp: "up",
+        w: "up",
+        W: "up",
+        ArrowLeft: "left",
+        a: "left",
+        A: "left",
+        ArrowRight: "right",
+        d: "right",
+        D: "right",
+      };
+
+      const nextDirection = directions[e.key];
+
+      if (!nextDirection || nextDirection === direction) return;
+
+      direction = nextDirection;
+      playSound("move");
+    });
   });
 
   // todo Render Snack.
@@ -150,7 +213,7 @@ addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // ! Show Snake Running 
+      // ! Show Snake Running
       snake.forEach((sagment) => {
         if ((foodEatCount - 1) % 6 == 0 && foodEatCount !== 1) {
           blocks[`${sagment.x}-${sagment.y}`].classList.remove("happy-snake");
@@ -167,11 +230,25 @@ addEventListener("DOMContentLoaded", () => {
       snake.pop();
 
       // ! Check is snake Consume Food or What !!
+      // if (head.x === foodCoords.x && head.y === foodCoords.y) {
+      //   score++;
+      //   changeScore();
+      //   snake.push(foodCoords);
+      //   foodEatCount++;
+      //   removePrevFood();
+      //   generateFood();
+      // }
+
       if (head.x === foodCoords.x && head.y === foodCoords.y) {
+        const ateBigFood = isBigFood;
+
+        playSound(ateBigFood ? "bigEat" : "eat");
+
         score++;
         changeScore();
-        snake.push(foodCoords);
+        snake.push({ ...foodCoords });
         foodEatCount++;
+
         removePrevFood();
         generateFood();
       }
@@ -220,16 +297,41 @@ addEventListener("DOMContentLoaded", () => {
   }
 
   // todo on game loose.
-  function looseGame() {
-    if(score > highScore){
-      localStorage.setItem("highScore", JSON.stringify(score));
-    }
-    clearInterval(intervalId);
-    alert("GAME OVER");
-    setTimeout(() => {
-      location.reload();
-    }, 0);
+  // function looseGame() {
+  //   if (score > highScore) {
+  //     localStorage.setItem("highScore", JSON.stringify(score));
+  //   }
+  //   clearInterval(intervalId);
+  //   alert("GAME OVER");
+  //   setTimeout(() => {
+  //     location.reload();
+  //   }, 0);
+  // }
+
+  
+let isGameOver = false;
+
+function looseGame() {
+  if (isGameOver) return;
+
+  isGameOver = true;
+  isGameRunning = false;
+
+  clearInterval(intervalId);
+  clearInterval(timeInterVal);
+
+  if (score > highScore) {
+    localStorage.setItem("highScore", JSON.stringify(score));
   }
+
+  playSound("gameOver");
+
+  setTimeout(() => {
+    alert("GAME OVER");
+    location.reload();
+  }, 800);
+}
+
 
   // todo display time:
   function gamePlayTime() {
