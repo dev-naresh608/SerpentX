@@ -8,9 +8,9 @@
   --bg-snake-color: #ffffff;
 
   --bg-snake-head-color: #ffffff;
-  --bg-snake-tail-color: #848484;
+  --bg-snake-tail-color: #cdcccc;
   --bg-happy-snake-color: #f3f2ef;
-  --bg-happy-snake-colorV2:rgb(255, 0, 0);
+  --bg-happy-snake-colorV2: rgb(255, 0, 0);
 
   --text-primary-color: #f0f0f0;
 
@@ -104,7 +104,6 @@ section .info {
   text-wrap: nowrap;
 }
 
-
 .block {
   /* border: 1px solid var(--border-primary-color); */
   /* border-radius: var(--br-xs); */
@@ -180,6 +179,11 @@ section .info {
   width: 20%;
   border-radius: 50%;
 }
+
+.hardMode::after, .hardMode::before{
+  background-color: rgb(255, 0, 0);
+
+}
 .up-head::after {
   /* top */
   left: 20%;
@@ -223,13 +227,13 @@ section .info {
   left: 60%;
   top: 20%;
 }
- /* ! Snake Tail  */
- .tail{
+/* ! Snake Tail  */
+.tail {
   background-color: var(--bg-snake-tail-color);
   position: relative;
- }
+}
 
- .modal{
+.modal {
   color: #ffffff;
   height: 100vh;
   width: 100vw;
@@ -241,7 +245,34 @@ section .info {
   justify-content: center;
   position: fixed;
   top: 0;
- }
+}
+.game-mode {
+  height: 100vh;
+  width: 100vw;
+  /* color: #ffffff; */
+  background-color: #4b4b4b68;
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+}
+.gameModeBtn{
+  height: 40px;
+  width: 120px;
+  background-color: transparent;
+  color: #acacac;
+  font-weight: bold;
+  border: 1.5px solid #82808068;
+  border-radius: var(--br-xs);
+  &:hover{
+    color: #ffffff;
+    border-color: #cbc7c7;
+  }
+}
 
 @keyframes popUp {
   0%,
@@ -262,7 +293,6 @@ section .info {
   50% {
     opacity: 0.7;
     transform: scale(1.25);
-      background-color: var(--bg-happy-snake-colorV2);
-
+    background-color: var(--bg-happy-snake-colorV2);
   }
 }

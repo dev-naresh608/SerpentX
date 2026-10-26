@@ -7,7 +7,6 @@ addEventListener("DOMContentLoaded", () => {
   }
 
   // ! todo Game Sounds:
-
   const sounds = {
     toggle: new Audio("./sounds/start-pause.wav"),
     move: new Audio("./sounds/move.wav"),
@@ -18,7 +17,7 @@ addEventListener("DOMContentLoaded", () => {
 
   const volumes = {
     toggle: 0.3,
-    move: 0.15,
+    move: 0.35,
     eat: 0.35,
     bigEat: 0.45,
     gameOver: 0.5,
@@ -47,9 +46,11 @@ addEventListener("DOMContentLoaded", () => {
   const board = document.querySelector(".board");
   const scoreElement = document.getElementById("score");
   const timer = document.getElementById("time");
+
   let minutes = 0;
   let seconds = 0;
   let score = 0;
+
   let intervalId = null;
   let timeInterVal = null;
 
@@ -64,6 +65,7 @@ addEventListener("DOMContentLoaded", () => {
   let row = 0;
   let col = 0;
   let isGameRunning = false;
+
   // ! Default snake position & direction.
   let direction = "right";
   let snake = [
@@ -119,40 +121,51 @@ addEventListener("DOMContentLoaded", () => {
   }
 
   // todo change direction of snake as per hit keys.
-  dir = addEventListener("keydown", (e) => {
-    // if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
-    //   direction = "down";
-    // } else if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
-    //   direction = "up";
-    // } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-    //   direction = "left";
-    // } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-    //   direction = "right";
-    // }
+  // dir = addEventListener("keydown", (e) => {
+  //   // if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
+  //   //   direction = "down";
+  //   // } else if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
+  //   //   direction = "up";
+  //   // } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+  //   //   direction = "left";
+  //   // } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+  //   //   direction = "right";
+  //   // }
 
-    addEventListener("keydown", (e) => {
-      const directions = {
-        ArrowDown: "down",
-        s: "down",
-        S: "down",
-        ArrowUp: "up",
-        w: "up",
-        W: "up",
-        ArrowLeft: "left",
-        a: "left",
-        A: "left",
-        ArrowRight: "right",
-        d: "right",
-        D: "right",
-      };
+  // });
+  addEventListener("keydown", (e) => {
+    const directions = {
+      ArrowDown: "down",
+      s: "down",
+      S: "down",
+      ArrowUp: "up",
+      w: "up",
+      W: "up",
+      ArrowLeft: "left",
+      a: "left",
+      A: "left",
+      ArrowRight: "right",
+      d: "right",
+      D: "right",
+    };
 
-      const nextDirection = directions[e.key];
+    let currentDirection = direction;
 
-      if (!nextDirection || nextDirection === direction) return;
+    const nextDirection = directions[e.key];
 
-      direction = nextDirection;
-      playSound("move");
-    });
+    if (
+      (currentDirection === "left" && nextDirection === "right") ||
+      (currentDirection === "right" && nextDirection === "left") ||
+      (currentDirection === "up" && nextDirection === "down") ||
+      (currentDirection === "down" && nextDirection === "up")
+    ) {
+      return;
+    }
+
+    if (!nextDirection || nextDirection === direction) return;
+
+    direction = nextDirection;
+    playSound("move");
   });
 
   // todo Render Snack.
@@ -308,30 +321,28 @@ addEventListener("DOMContentLoaded", () => {
   //   }, 0);
   // }
 
-  
-let isGameOver = false;
+  let isGameOver = false;
 
-function looseGame() {
-  if (isGameOver) return;
+  function looseGame() {
+    if (isGameOver) return;
 
-  isGameOver = true;
-  isGameRunning = false;
+    isGameOver = true;
+    isGameRunning = false;
 
-  clearInterval(intervalId);
-  clearInterval(timeInterVal);
+    clearInterval(intervalId);
+    clearInterval(timeInterVal);
 
-  if (score > highScore) {
-    localStorage.setItem("highScore", JSON.stringify(score));
+    if (score > highScore) {
+      localStorage.setItem("highScore", JSON.stringify(score));
+    }
+
+    playSound("gameOver");
+
+    setTimeout(() => {
+      alert("GAME OVER");
+      location.reload();
+    }, 800);
   }
-
-  playSound("gameOver");
-
-  setTimeout(() => {
-    alert("GAME OVER");
-    location.reload();
-  }, 800);
-}
-
 
   // todo display time:
   function gamePlayTime() {
